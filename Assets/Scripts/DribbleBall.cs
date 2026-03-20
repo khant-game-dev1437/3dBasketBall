@@ -27,7 +27,12 @@ public class DribbleBall : MonoBehaviour
 
     float velocityY;
     Vector3 bounceXZ;
+    Rigidbody rb;
 
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     Vector3 GetHandTarget()
     {
@@ -37,6 +42,14 @@ public class DribbleBall : MonoBehaviour
     void LateUpdate()
     {
         if (handBone == null) return;
+
+        // Keep rigidbody kinematic while dribbling so it doesn't fight us
+        if (rb != null && !rb.isKinematic)
+        {
+            rb.isKinematic = true;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
 
         Vector3 handTarget = GetHandTarget();
 
@@ -115,5 +128,20 @@ public class DribbleBall : MonoBehaviour
         transform.Rotate(Vector3.right, 300f * Time.deltaTime, Space.World);
     }
 
-    
+    public void StopDribble()
+    {
+        enabled = false;
+    }
+
+    public void StartDribble()
+    {
+        state = DribbleState.InHand;
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        enabled = true;
+    }
 }
