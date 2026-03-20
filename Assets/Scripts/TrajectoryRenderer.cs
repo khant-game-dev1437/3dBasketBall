@@ -1,11 +1,11 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
-/// <summary>
-/// Draws a predicted trajectory arc while aiming.
-/// Uses kinematic equation: p(t) = p0 + v*t + 0.5*g*t^2
-/// </summary>
+
 public class TrajectoryRenderer : MonoBehaviour
 {
+    public Boolean lineShow = true;
     LineRenderer lr;
     int maxPoints = 50;
     float timeStep = 0.04f;
@@ -22,6 +22,14 @@ public class TrajectoryRenderer : MonoBehaviour
         lr.startColor = new Color(0.2f, 0.5f, 1f, 1f);
         lr.endColor = new Color(0.1f, 0.3f, 0.8f, 1f);
         lr.enabled = false;
+
+        if(lineShow)
+        {
+            Show();
+        } else
+        {
+            Hide();
+        }
     }
 
     public void UpdateTrajectory(Vector3 startPos, Vector3 velocity)
@@ -51,11 +59,22 @@ public class TrajectoryRenderer : MonoBehaviour
         }
     }
 
+    public void AimLineToggle()
+    {
+        if(lineShow)
+        {
+            Show();
+        } else
+        {
+            Hide();
+        }
+    }
+
     public void Show()
     {
         lr.enabled = true;
         lr.positionCount = maxPoints;
-    }
+}
 
     public void Hide()
     {

@@ -15,8 +15,8 @@ public class DribbleBall : MonoBehaviour
     public float groundY = 0.22f;
     [Tooltip("How fast the ball falls")]
     public float gravity = 20f;
-    [Tooltip("Bounce energy retention (0-1)")]
-    public float bounceForce = 0.85f;
+    [Tooltip("Fixed upward speed after bounce")]
+    public float bounceUpSpeed = 6f;
     [Tooltip("World-space offset below the hand (Y is down)")]
     public Vector3 handOffset = new Vector3(0f, -0.25f, 0f);
     [Tooltip("How fast the ball lerps back to hand on catch")]
@@ -32,6 +32,9 @@ public class DribbleBall : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     Vector3 GetHandTarget()
@@ -78,7 +81,7 @@ public class DribbleBall : MonoBehaviour
                 if (fallPos.y <= groundY)
                 {
                     fallPos.y = groundY;
-                    velocityY = Mathf.Abs(velocityY) * bounceForce;
+                    velocityY = bounceUpSpeed;
                     state = DribbleState.Rising;
                 }
 

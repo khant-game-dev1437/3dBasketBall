@@ -7,6 +7,7 @@ public class BallController : MonoBehaviour
     public DribbleBall dribble;
     public TrajectoryRenderer trajectory;
     public Transform hoopTarget;
+    public PlayerAnimator playerAnimator;
 
     [Header("Arc Settings")]
     [Tooltip("How high the arc peaks above start/target")]
@@ -19,7 +20,7 @@ public class BallController : MonoBehaviour
     public float aimSensitivityY = 6f;
     public float clickRadius = 3f;
 
-    enum State { Dribbling, Aiming, InFlight }
+    enum State { Dribbling, Aiming, InFlight, Resetting }
     State state = State.Dribbling;
 
     Rigidbody rb;
@@ -27,7 +28,7 @@ public class BallController : MonoBehaviour
     Vector2 mouseStartScreen;
     Vector3 launchPos;
     Vector3 launchVelocity;
-    bool hitRimThisShot;
+    
 
     void Awake()
     {
@@ -38,6 +39,9 @@ public class BallController : MonoBehaviour
     void Start()
     {
         state = State.Dribbling;
+        rb.isKinematic = true;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
     }
 
     void Update()
@@ -76,8 +80,7 @@ public class BallController : MonoBehaviour
     void EnterAim()
     {
         state = State.Aiming;
-        hitRimThisShot = false;
-
+        
         if (dribble != null) dribble.StopDribble();
 
         rb.isKinematic = true;
@@ -89,7 +92,7 @@ public class BallController : MonoBehaviour
         // Hold ball at current position
         launchPos = transform.position + Vector3.up * 0.3f;
 
-        if (trajectory != null) trajectory.Show();
+        if (trajectory != null) trajectory.AimLineToggle();
     }
 
     void UpdateAim()
@@ -161,6 +164,11 @@ public class BallController : MonoBehaviour
         rb.angularVelocity = new Vector3(-launchVelocity.magnitude * 1.5f, 0f, 0f);
 
         if (trajectory != null) trajectory.Hide();
+
+        if (playerAnimator != null) playerAnimator.PlayThrow();
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.RegisterThrow();
     }
 
     void CancelAim()
@@ -174,26 +182,58 @@ public class BallController : MonoBehaviour
    
     public void ResetBall()
     {
-        state = State.Dribbling;
+        state = State.Resetting;
         rb.isKinematic = true;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         if (trajectory != null) trajectory.Hide();
+        StartCoroutine(ResetLerp());
+    }
+
+    System.Collections.IEnumerator ResetLerp()
+    {
+        Vector3 startPos = transform.position;
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 2f; // Speed of lerp
+            Vector3 handPos = dribble != null && dribble.handBone != null
+                ? dribble.handBone.position
+                : startPos + Vector3.up * 2f;
+
+            // Lerp with an arc so it looks like the ball floats back
+            Vector3 pos = Vector3.Lerp(startPos, handPos, t);
+            pos.y += Mathf.Sin(t * Mathf.PI) * 2f;
+            transform.position = pos;
+            yield return null;
+        }
+
+        state = State.Dribbling;
         if (dribble != null) dribble.StartDribble();
+        if (playerAnimator != null) playerAnimator.PlayDribble();
     }
 
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
-        if (state == State.InFlight)
+        if (state != State.InFlight) return;
+
+        if (collision.gameObject.name.Contains("win"))
         {
-            if (collision.gameObject.name.Contains("Rim"))
-            {
-                hitRimThisShot = true;
-            }
+            if (GameManager.Instance != null)
+                GameManager.Instance.RegisterScore();
         }
     }
 
-    public bool DidHitRim() => hitRimThisShot;
+    void OnCollisionEnter(Collision collision)
+    {
+        if (state != State.InFlight) return;
+
+        // Ball hit something solid (ground, wall, rim) — start reset timer
+        if (GameManager.Instance != null)
+            GameManager.Instance.StartResetTimer();
+    }
+
     public bool IsInFlight() => state == State.InFlight;
 }
