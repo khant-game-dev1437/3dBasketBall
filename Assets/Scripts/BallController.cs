@@ -227,6 +227,9 @@ public class BallController : MonoBehaviour
 
             if (GameManager.Instance != null)
                 GameManager.Instance.RegisterScore(wasSwish);
+
+            if (CameraController.Instance != null)
+                CameraController.Instance.PlayScoreEffect();
         }
     }
 
