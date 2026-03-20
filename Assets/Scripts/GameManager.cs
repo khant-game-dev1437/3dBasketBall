@@ -72,18 +72,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RegisterScore()
+    public void RegisterScore(bool wasSwish = false)
     {
         if (scoredThisShot) return;
 
         scoredThisShot = true;
         ShotsMade++;
 
-        Score += 2;
+        int points = wasSwish ? 3 : 2;
+        Score += points;
         Streak++;
         if (Streak > BestStreak) BestStreak = Streak;
 
-        Debug.Log("SCORE! Total: " + Score + " Streak: " + Streak);
+        Debug.Log(wasSwish ? "SWISH! +" + points : "SCORE! +" + points);
         OnScore?.Invoke(Score, Streak);
 
         // Start reset timer after scoring

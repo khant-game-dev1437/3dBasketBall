@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -28,7 +29,7 @@ public class BallController : MonoBehaviour
     Vector2 mouseStartScreen;
     Vector3 launchPos;
     Vector3 launchVelocity;
-    
+    bool hitRimThisShot;
 
     void Awake()
     {
@@ -80,7 +81,8 @@ public class BallController : MonoBehaviour
     void EnterAim()
     {
         state = State.Aiming;
-        
+        hitRimThisShot = false;
+
         if (dribble != null) dribble.StopDribble();
 
         rb.isKinematic = true;
@@ -221,8 +223,10 @@ public class BallController : MonoBehaviour
 
         if (collision.gameObject.name.Contains("win"))
         {
+            bool wasSwish = !hitRimThisShot;
+
             if (GameManager.Instance != null)
-                GameManager.Instance.RegisterScore();
+                GameManager.Instance.RegisterScore(wasSwish);
         }
     }
 
@@ -230,7 +234,12 @@ public class BallController : MonoBehaviour
     {
         if (state != State.InFlight) return;
 
-        // Ball hit something solid (ground, wall, rim) — start reset timer
+        if (collision.gameObject.CompareTag("Rim"))
+        {
+            hitRimThisShot = true;
+            Debug.Log("Rim hit!");
+        }
+
         if (GameManager.Instance != null)
             GameManager.Instance.StartResetTimer();
     }
