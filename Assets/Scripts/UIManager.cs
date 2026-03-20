@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
         yield return null;
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnScore += UpdateScoreUI;
+            GameManager.Instance.OnScore += OnScoreUI;
             GameManager.Instance.OnMiss += UpdateMissUI;
             GameManager.Instance.OnBallReset += UpdateResetUI;
         }
@@ -46,23 +46,32 @@ public class UIManager : MonoBehaviour
     {
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnScore -= UpdateScoreUI;
+            GameManager.Instance.OnScore -= OnScoreUI;
             GameManager.Instance.OnMiss -= UpdateMissUI;
             GameManager.Instance.OnBallReset -= UpdateResetUI;
         }
     }
 
-    void UpdateScoreUI(int score, int streak)
+    void OnScoreUI(int score, int streak, bool wasSwish)
     {
         txtScore.text = "Score: " + score;
         txtStreaks.text = "Streaks: " + streak;
         txtTotalShots.text = "Total Shots: " + GameManager.Instance.ShotsTaken;
 
-        string[] msgs = { "NICE!", "BUCKET!", "SCORE!", "CASH!" };
-        string msg = msgs[Random.Range(0, msgs.Length)];
-
-        if (streak >= 3)
+        string msg;
+        if (wasSwish)
+        {
+            msg = "SWISH!";
+        }
+        else if (streak >= 3)
+        {
             msg = streak + " IN A ROW!";
+        }
+        else
+        {
+            string[] msgs = { "NICE!", "BUCKET!", "SCORE!", "CASH!" };
+            msg = msgs[Random.Range(0, msgs.Length)];
+        }
 
         ShowPrompt(msg, Color.green, true);
     }

@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     public int ShotsMade { get; private set; }
 
     // Events
-    public event Action<int, int> OnScore;
+    public event Action<int, int, bool> OnScore;
     public event Action OnMiss;
     public event Action OnBallReset;
 
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         if (Streak > BestStreak) BestStreak = Streak;
 
         Debug.Log(wasSwish ? "SWISH! +" + points : "SCORE! +" + points);
-        OnScore?.Invoke(Score, Streak);
+        OnScore?.Invoke(Score, Streak, wasSwish);
 
         // Start reset timer after scoring
         waitingForReset = true;
