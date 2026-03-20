@@ -989,10 +989,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 310270350}
   releaseHeight: 2.09
-  catchHeight: 1
+  catchHeight: 1.3
   groundY: 0.12
   gravity: 20
-  bounceUpSpeed: 6
+  bounceUpSpeed: 15
   handOffset: {x: 0.04, y: -0.4, z: 0.2}
   catchSmoothing: 15
 --- !u!135 &744622638
@@ -1072,6 +1072,7 @@ MonoBehaviour:
   trajectory: {fileID: 744622640}
   hoopTarget: {fileID: 543450651751709285}
   playerAnimator: {fileID: 708183666}
+  bounceSound: {fileID: 8300000, guid: dc921a424f19d6043987f93d92e9ec65, type: 3}
   arcHeight: 2
   aimSensitivityX: 8
   aimSensitivityY: 6

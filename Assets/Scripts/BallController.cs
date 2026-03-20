@@ -9,6 +9,7 @@ public class BallController : MonoBehaviour
     public TrajectoryRenderer trajectory;
     public Transform hoopTarget;
     public PlayerAnimator playerAnimator;
+    public AudioClip bounceSound;
 
     [Header("Arc Settings")]
     [Tooltip("How high the arc peaks above start/target")]
@@ -26,6 +27,7 @@ public class BallController : MonoBehaviour
 
     Rigidbody rb;
     Camera cam;
+    AudioSource audioSource;
     Vector2 mouseStartScreen;
     Vector3 launchPos;
     Vector3 launchVelocity;
@@ -35,6 +37,9 @@ public class BallController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         cam = Camera.main;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Start()
@@ -236,6 +241,9 @@ public class BallController : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (state != State.InFlight) return;
+
+        if (bounceSound != null)
+            audioSource.PlayOneShot(bounceSound);
 
         if (collision.gameObject.CompareTag("Rim"))
         {
