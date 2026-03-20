@@ -988,6 +988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handBone: {fileID: 310270350}
+  bounceSound: {fileID: 8300000, guid: fa020984465cf5442ad1588a728a6db2, type: 3}
   releaseHeight: 2.09
   catchHeight: 1.3
   groundY: 0.12
@@ -1072,7 +1073,7 @@ MonoBehaviour:
   trajectory: {fileID: 744622640}
   hoopTarget: {fileID: 543450651751709285}
   playerAnimator: {fileID: 708183666}
-  bounceSound: {fileID: 8300000, guid: dc921a424f19d6043987f93d92e9ec65, type: 3}
+  bounceSound: {fileID: 8300000, guid: fa020984465cf5442ad1588a728a6db2, type: 3}
   arcHeight: 2
   aimSensitivityX: 8
   aimSensitivityY: 6

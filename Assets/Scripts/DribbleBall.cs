@@ -5,6 +5,7 @@ public class DribbleBall : MonoBehaviour
     [Header("References")]
     [Tooltip("The right hand bone transform from the character rig")]
     public Transform handBone;
+    public AudioClip bounceSound;
 
     [Header("Dribble Settings")]
     [Tooltip("Height below which the ball detaches and bounces")]
@@ -28,10 +29,14 @@ public class DribbleBall : MonoBehaviour
     float velocityY;
     Vector3 bounceXZ;
     Rigidbody rb;
+    AudioSource audioSource;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
         rb.isKinematic = true;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -83,6 +88,10 @@ public class DribbleBall : MonoBehaviour
                     fallPos.y = groundY;
                     velocityY = bounceUpSpeed;
                     state = DribbleState.Rising;
+
+                    Debug.Log("Bounce! sound:" + (bounceSound != null) + " audio:" + (audioSource != null));
+                    if (bounceSound != null)
+                        audioSource.PlayOneShot(bounceSound);
                 }
 
                 transform.position = fallPos;
