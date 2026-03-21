@@ -10,6 +10,7 @@ public class BallController : MonoBehaviour
     public Transform hoopTarget;
     public PlayerAnimator playerAnimator;
     public AudioClip bounceSound;
+    public Transform handBone;
 
     [Header("Arc Settings")]
     [Tooltip("How high the arc peaks above start/target")]
@@ -22,7 +23,7 @@ public class BallController : MonoBehaviour
     public float aimSensitivityY = 6f;
     public float clickRadius = 3f;
 
-    enum State { Dribbling, Aiming, InFlight, Resetting }
+    enum State { Dribbling, Aiming, WindUp, InFlight, Resetting }
     State state = State.Dribbling;
 
     Rigidbody rb;
@@ -46,8 +47,6 @@ public class BallController : MonoBehaviour
     {
         state = State.Dribbling;
         rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
     }
 
     void Update()
@@ -91,8 +90,6 @@ public class BallController : MonoBehaviour
         if (dribble != null) dribble.StopDribble();
 
         rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
 
         mouseStartScreen = Input.mousePosition;
 
@@ -163,16 +160,23 @@ public class BallController : MonoBehaviour
 
     void Throw()
     {
+        state = State.WindUp;
+
+        if (trajectory != null) trajectory.Hide();
+        if (playerAnimator != null) playerAnimator.PlayThrow();
+    }
+
+    // Called by Animation Event on the throw clip at the release frame
+    public void ReleaseBall()
+    {
+        if (state != State.WindUp) return;
+
         state = State.InFlight;
 
         rb.isKinematic = false;
         rb.drag = 0f;
         rb.velocity = launchVelocity;
         rb.angularVelocity = new Vector3(-launchVelocity.magnitude * 1.5f, 0f, 0f);
-
-        if (trajectory != null) trajectory.Hide();
-
-        if (playerAnimator != null) playerAnimator.PlayThrow();
 
         if (GameManager.Instance != null)
             GameManager.Instance.RegisterThrow();
@@ -191,8 +195,6 @@ public class BallController : MonoBehaviour
     {
         state = State.Resetting;
         rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
         if (trajectory != null) trajectory.Hide();
         StartCoroutine(ResetLerp());
     }
@@ -253,6 +255,15 @@ public class BallController : MonoBehaviour
 
         if (GameManager.Instance != null)
             GameManager.Instance.StartResetTimer();
+    }
+
+    void LateUpdate()
+    {
+        // During wind-up, ball follows the hand
+        if (state == State.WindUp && handBone != null)
+        {
+            transform.position = handBone.position;
+        }
     }
 
     public bool IsInFlight() => state == State.InFlight;

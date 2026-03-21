@@ -3,10 +3,20 @@ using UnityEngine;
 public class PlayerAnimator : MonoBehaviour
 {
     Animator animator;
+    public BallController ball;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
+    }
+
+    void Start()
+    {
+        if (animator != null)
+        {
+            animator.ResetTrigger("Throw");
+            animator.ResetTrigger("Reset");
+        }
     }
 
     public void PlayThrow()
@@ -19,5 +29,12 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (animator != null)
             animator.SetTrigger("Reset");
+    }
+
+    // Called by Animation Event on the Throw clip
+    public void ReleaseBall()
+    {
+        if (ball != null)
+            ball.ReleaseBall();
     }
 }

@@ -15,9 +15,9 @@ public class DribbleBall : MonoBehaviour
     [Tooltip("Ground Y position for bounce (floor top + ball radius)")]
     public float groundY = 0.22f;
     [Tooltip("How fast the ball falls")]
-    public float gravity = 20f;
+    public float gravity = 30f;
     [Tooltip("Fixed upward speed after bounce")]
-    public float bounceUpSpeed = 6f;
+    public float bounceUpSpeed = 9f;
     [Tooltip("World-space offset below the hand (Y is down)")]
     public Vector3 handOffset = new Vector3(0f, -0.25f, 0f);
     [Tooltip("How fast the ball lerps back to hand on catch")]
@@ -38,8 +38,6 @@ public class DribbleBall : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
         rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
     }
 
     Vector3 GetHandTarget()
@@ -55,8 +53,6 @@ public class DribbleBall : MonoBehaviour
         if (rb != null && !rb.isKinematic)
         {
             rb.isKinematic = true;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
         }
 
         Vector3 handTarget = GetHandTarget();
@@ -89,7 +85,6 @@ public class DribbleBall : MonoBehaviour
                     velocityY = bounceUpSpeed;
                     state = DribbleState.Rising;
 
-                    Debug.Log("Bounce! sound:" + (bounceSound != null) + " audio:" + (audioSource != null));
                     if (bounceSound != null)
                         audioSource.PlayOneShot(bounceSound);
                 }
@@ -151,8 +146,6 @@ public class DribbleBall : MonoBehaviour
         if (rb != null)
         {
             rb.isKinematic = true;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
         }
         enabled = true;
     }
