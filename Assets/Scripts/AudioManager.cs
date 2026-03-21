@@ -7,12 +7,9 @@ public class AudioManager : MonoBehaviour
 
     [Header("Clips")]
     public AudioClip scoreSound;
-    public AudioClip swishSound;
     public AudioClip missSound;
     public AudioClip crowdCheer;
     public AudioClip crowdLaugh;
-    public AudioClip throwSound;
-    public AudioClip timerEndSound;
 
     AudioSource audioSource;
 
@@ -41,8 +38,6 @@ public class AudioManager : MonoBehaviour
         {
             GameManager.Instance.OnScore += PlayScoreSound;
             GameManager.Instance.OnMiss += PlayMissSound;
-            GameManager.Instance.OnThrow += PlayThrowSound;
-            GameManager.Instance.OnGameOver += PlayTimerEnd;
             GameManager.Instance.OnPityMode += PlayLaugh;
         }
     }
@@ -53,17 +48,13 @@ public class AudioManager : MonoBehaviour
         {
             GameManager.Instance.OnScore -= PlayScoreSound;
             GameManager.Instance.OnMiss -= PlayMissSound;
-            GameManager.Instance.OnThrow -= PlayThrowSound;
-            GameManager.Instance.OnGameOver -= PlayTimerEnd;
             GameManager.Instance.OnPityMode -= PlayLaugh;
         }
     }
 
     void PlayScoreSound(int score, int streak, bool wasSwish)
     {
-        if (wasSwish && swishSound != null)
-            audioSource.PlayOneShot(swishSound);
-        else if (scoreSound != null)
+        if (scoreSound != null)
             audioSource.PlayOneShot(scoreSound);
 
         if (crowdCheer != null)
@@ -74,18 +65,6 @@ public class AudioManager : MonoBehaviour
     {
         if (missSound != null)
             audioSource.PlayOneShot(missSound);
-    }
-
-    void PlayThrowSound()
-    {
-        if (throwSound != null)
-            audioSource.PlayOneShot(throwSound);
-    }
-
-    void PlayTimerEnd()
-    {
-        if (timerEndSound != null)
-            audioSource.PlayOneShot(timerEndSound);
     }
 
     void PlayLaugh()
