@@ -11,6 +11,7 @@ public class BallController : MonoBehaviour
     public PlayerAnimator playerAnimator;
     public AudioClip bounceSound;
     public Transform handBone;
+    ParticleSystem scoreParticles;
 
     [Header("Arc Settings")]
     public float arcHeight = 5f;
@@ -42,6 +43,43 @@ public class BallController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
+        CreateScoreParticles();
+    }
+
+    void CreateScoreParticles()
+    {
+        GameObject particleObj = new GameObject("ScoreParticles");
+        scoreParticles = particleObj.AddComponent<ParticleSystem>();
+
+        var main = scoreParticles.main;
+        main.startSpeed = 5f;
+        main.startSize = 0.3f;
+        main.startLifetime = 0.8f;
+        main.startColor = new Color(1f, 0.8f, 0.2f); // Gold
+        main.gravityModifier = 0.5f;
+        main.loop = false;
+        main.playOnAwake = false;
+        main.maxParticles = 50;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+        var emission = scoreParticles.emission;
+        emission.rateOverTime = 0;
+        emission.SetBursts(new ParticleSystem.Burst[] {
+            new ParticleSystem.Burst(0f, 30)
+        });
+
+        var shape = scoreParticles.shape;
+        shape.shapeType = ParticleSystemShapeType.Sphere;
+        shape.radius = 0.3f;
+
+        var renderer = particleObj.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Mesh;
+        renderer.mesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+        Material mat = new Material(Shader.Find("Unlit/Color"));
+        mat.color = new Color(1f, 0.8f, 0.2f);
+        renderer.material = mat;
+
+        scoreParticles.Stop();
     }
 
     void Start()
@@ -241,6 +279,12 @@ public class BallController : MonoBehaviour
 
             if (CameraController.Instance != null)
                 CameraController.Instance.PlayScoreEffect();
+
+            if (scoreParticles != null)
+            {
+                scoreParticles.transform.position = collision.transform.position;
+                scoreParticles.Play();
+            }
         }
     }
 
