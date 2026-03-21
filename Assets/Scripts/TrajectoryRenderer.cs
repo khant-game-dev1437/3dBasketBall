@@ -1,11 +1,8 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
-
 
 public class TrajectoryRenderer : MonoBehaviour
 {
-    public Boolean lineShow = true;
+    public bool lineShow = true;
     LineRenderer lr;
     int maxPoints = 50;
     float timeStep = 0.04f;
@@ -23,13 +20,10 @@ public class TrajectoryRenderer : MonoBehaviour
         lr.endColor = new Color(0.1f, 0.3f, 0.8f, 1f);
         lr.enabled = false;
 
-        if(lineShow)
-        {
+        if (lineShow)
             Show();
-        } else
-        {
+        else
             Hide();
-        }
     }
 
     public void UpdateTrajectory(Vector3 startPos, Vector3 velocity)
@@ -50,7 +44,6 @@ public class TrajectoryRenderer : MonoBehaviour
             Vector3 point = startPos + velocity * t + 0.5f * gravity * t * t;
             lr.SetPosition(i, point);
 
-            // Stop if below ground
             if (point.y < 0f)
             {
                 lr.positionCount = i + 1;
@@ -61,20 +54,17 @@ public class TrajectoryRenderer : MonoBehaviour
 
     public void AimLineToggle()
     {
-        if(lineShow)
-        {
+        if (lineShow)
             Show();
-        } else
-        {
+        else
             Hide();
-        }
     }
 
     public void Show()
     {
         lr.enabled = true;
         lr.positionCount = maxPoints;
-}
+    }
 
     public void Hide()
     {

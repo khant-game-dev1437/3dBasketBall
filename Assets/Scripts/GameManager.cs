@@ -165,7 +165,6 @@ public class GameManager : MonoBehaviour
         Streak++;
         if (Streak > BestStreak) BestStreak = Streak;
 
-        Debug.Log(wasSwish ? "SWISH! +" + points : "SCORE! +" + points);
         OnScore?.Invoke(Score, Streak, wasSwish);
 
         waitingForReset = true;
@@ -180,7 +179,6 @@ public class GameManager : MonoBehaviour
         {
             Streak = 0;
             consecutiveMisses++;
-            Debug.Log("Consecutive misses: " + consecutiveMisses);
             OnMiss?.Invoke();
 
             // Pity mode: move hoop closer after consecutive misses

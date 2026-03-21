@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -189,7 +188,7 @@ public class BallController : MonoBehaviour
         float totalTime = timeUp + timeDown;
 
         // Initial upward velocity
-        float vy = g * timeUp; // 
+        float vy = g * timeUp;
 
         // Horizontal velocity to cover XZ distance in totalTime
         Vector3 horizontal = new Vector3(target.x - start.x, 0f, target.z - start.z);
@@ -270,7 +269,7 @@ public class BallController : MonoBehaviour
     {
         if (state != State.InFlight) return;
 
-        if (collision.gameObject.name.Contains("win"))
+        if (collision.gameObject.CompareTag("Score"))
         {
             bool wasSwish = !hitRimThisShot;
 
@@ -298,7 +297,6 @@ public class BallController : MonoBehaviour
         if (collision.gameObject.CompareTag("Rim"))
         {
             hitRimThisShot = true;
-            Debug.Log("Rim hit!");
         }
 
         if (GameManager.Instance != null)

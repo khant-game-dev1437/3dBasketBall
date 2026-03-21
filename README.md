@@ -63,9 +63,16 @@ A 3D basketball shooting game built in Unity where the player throws a basketbal
 - Smooth transitions between states via Animator Controller triggers
 - Root motion baked into pose to prevent rotation glitches
 
+### Particle Effects
+- Golden particle burst at the hoop on every score
+- Particles created programmatically with sphere mesh rendering
+
 ### Audio
 - Basketball bounce sound on ground/rim collision
 - Bounce sound during dribble at lowest point
+- Crowd cheering on score
+- Crowd laughing when pity mode activates
+- Centralized AudioManager subscribing to game events
 
 ## Architecture
 
@@ -80,8 +87,7 @@ A 3D basketball shooting game built in Unity where the player throws a basketbal
 | `PlayerAnimator.cs` | Controls Animator triggers and relays Animation Events |
 | `CameraController.cs` | Score camera zoom with slow-motion effect |
 | `UIManager.cs` | All UI updates, prompt animations, timer display |
-| `TriggerRelay.cs` | Forwards trigger events between GameObjects |
-| `ScoreDetector.cs` | Score trigger detection (unused - detection moved to BallController) |
+| `AudioManager.cs` | Centralized audio playback subscribing to game events |
 
 ### Event-Driven Design
 Scripts communicate through C# events on GameManager:
@@ -105,7 +111,7 @@ This keeps scripts decoupled - UI, camera, and audio systems subscribe to events
 - Physics materials control bounce behavior on ball, ground, and rim
 
 ## Tech Stack
-- Unity 6 (2022.3 LTS)
+- Unity 6 (6000.3.11f1)
 - C# with Unity's legacy Input System
 - Mixamo animations (Big Vegas character)
 - No third-party interaction packages

@@ -105,7 +105,6 @@ public class UIManager : MonoBehaviour
 
     void OnGameOver()
     {
-        Debug.Log("GameOver called, prompt: " + (txtPrompt != null));
         if (gameOverShown) return;
         gameOverShown = true;
 
