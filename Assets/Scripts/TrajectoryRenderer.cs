@@ -14,7 +14,7 @@ public class TrajectoryRenderer : MonoBehaviour
         lr.startWidth = 0.06f;
         lr.endWidth = 0.02f;
         lr.useWorldSpace = true;
-        lr.material = new Material(Shader.Find("Unlit/Color"));
+        lr.material = new Material(Shader.Find("Sprites/Default"));
         lr.material.color = new Color(0.2f, 0.5f, 1f);
         lr.startColor = new Color(0.2f, 0.5f, 1f, 1f);
         lr.endColor = new Color(0.1f, 0.3f, 0.8f, 1f);

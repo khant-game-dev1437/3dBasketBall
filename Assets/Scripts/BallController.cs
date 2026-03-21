@@ -74,7 +74,7 @@ public class BallController : MonoBehaviour
         var renderer = particleObj.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Mesh;
         renderer.mesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
-        Material mat = new Material(Shader.Find("Unlit/Color"));
+        Material mat = new Material(Shader.Find("Sprites/Default"));
         mat.color = new Color(1f, 0.8f, 0.2f);
         renderer.material = mat;
 
@@ -96,15 +96,7 @@ public class BallController : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                Vector3 toBall = transform.position - ray.origin;
-                Vector3 proj = Vector3.Project(toBall, ray.direction);
-                float dist = (toBall - proj).magnitude;
-
-                if (dist < clickRadius)
-                {
-                    EnterAim();
-                }
+                EnterAim();
             }
         }
         else if (state == State.Aiming)
