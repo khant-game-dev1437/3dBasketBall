@@ -13,8 +13,9 @@ public class BallController : MonoBehaviour
     public Transform handBone;
 
     [Header("Arc Settings")]
-    [Tooltip("How high the arc peaks above start/target")]
     public float arcHeight = 5f;
+    public float pityArcHeight = 5f;
+    float originalArcHeight;
 
     [Header("Aim Settings")]
     [Tooltip("How much mouse movement shifts aim left/right")]
@@ -47,12 +48,15 @@ public class BallController : MonoBehaviour
     {
         state = State.Dribbling;
         rb.isKinematic = true;
+        originalArcHeight = arcHeight;
     }
 
     void Update()
     {
         if (state == State.Dribbling)
         {
+            if (GameManager.Instance != null && (GameManager.Instance.GameOver || !GameManager.Instance.GameActive)) return;
+
             if (Input.GetMouseButtonDown(0))
             {
                 Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -137,7 +141,6 @@ public class BallController : MonoBehaviour
     {
         float g = Mathf.Abs(Physics.gravity.y);
 
-        // Peak must be above both start and target
         float peakY = Mathf.Max(start.y, target.y) + height;
 
         // Vertical: how long to go up, how long to come down
@@ -164,6 +167,10 @@ public class BallController : MonoBehaviour
 
         if (trajectory != null) trajectory.Hide();
         if (playerAnimator != null) playerAnimator.PlayThrow();
+
+        // Count the shot as soon as player commits to throwing
+        if (GameManager.Instance != null)
+            GameManager.Instance.RegisterThrow();
     }
 
     // Called by Animation Event on the throw clip at the release frame
@@ -174,12 +181,9 @@ public class BallController : MonoBehaviour
         state = State.InFlight;
 
         rb.isKinematic = false;
-        rb.drag = 0f;
-        rb.velocity = launchVelocity;
+        rb.linearDamping = 0f;
+        rb.linearVelocity = launchVelocity;
         rb.angularVelocity = new Vector3(-launchVelocity.magnitude * 1.5f, 0f, 0f);
-
-        if (GameManager.Instance != null)
-            GameManager.Instance.RegisterThrow();
     }
 
     void CancelAim()
@@ -264,6 +268,11 @@ public class BallController : MonoBehaviour
         {
             transform.position = handBone.position;
         }
+    }
+
+    public void SetPityMode(bool active)
+    {
+        arcHeight = active ? pityArcHeight : originalArcHeight;
     }
 
     public bool IsInFlight() => state == State.InFlight;

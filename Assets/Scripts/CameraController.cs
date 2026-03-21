@@ -43,8 +43,9 @@ public class CameraController : MonoBehaviour
         Vector3 targetPos = originalPos;
         if (hoopTarget != null)
         {
-            Vector3 dir = (hoopTarget.position - originalPos).normalized;
-            targetPos = originalPos + dir * 3f;
+            Vector3 toHoop = hoopTarget.position - originalPos;
+            float moveDist = Mathf.Min(3f, toHoop.magnitude * 0.4f);
+            targetPos = originalPos + toHoop.normalized * moveDist;
         }
 
         float timer = 0f;

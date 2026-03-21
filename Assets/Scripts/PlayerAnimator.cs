@@ -28,7 +28,11 @@ public class PlayerAnimator : MonoBehaviour
     public void PlayDribble()
     {
         if (animator != null)
-            animator.SetTrigger("Reset");
+        {
+            animator.ResetTrigger("Throw");
+            animator.ResetTrigger("Reset");
+            animator.Play("Dribble", 0, 0f);
+        }
     }
 
     // Called by Animation Event on the Throw clip
